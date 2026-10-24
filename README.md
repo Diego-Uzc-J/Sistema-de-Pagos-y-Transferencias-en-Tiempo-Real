@@ -57,3 +57,12 @@ src/
         ├── service/         # Pruebas unitarias (JUnit 5 + Mockito)
         └── integration/     # Pruebas de integración y concurrencia con Testcontainers
 ```
+
+---
+
+## 📊 Modelo de Datos (Esquema Relacional)
+El sistema utiliza tres tablas principales optimizadas con tipos de datos monetarios exactos (DECIMAL(15,2) para prevenir errores de punto flotante):
+
+- **users:** Almacena la información de los clientes.
+- **accounts:** Gestiona los números de cuenta, saldos y divisas asociadas a cada usuario.
+- **transactions:** Registra la trazabilidad histórica de depósitos, retiros y transferencias con sus respectivos estados (SUCCESS, FAILED).
