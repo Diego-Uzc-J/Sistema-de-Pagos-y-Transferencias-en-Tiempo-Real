@@ -66,3 +66,38 @@ El sistema utiliza tres tablas principales optimizadas con tipos de datos moneta
 - **users:** Almacena la información de los clientes.
 - **accounts:** Gestiona los números de cuenta, saldos y divisas asociadas a cada usuario.
 - **transactions:** Registra la trazabilidad histórica de depósitos, retiros y transferencias con sus respectivos estados (SUCCESS, FAILED).
+
+---
+
+🔌 Contratos de la API (Endpoints Principales)
+
+| Método | Endpoint | Descripción |
+| :--- | :--- | :--- |
+| `POST` | `/api/v1/users` | Registra un nuevo cliente en el sistema. |
+| `POST` | `/api/v1/accounts` | Abre una nueva cuenta bancaria con depósito inicial. |
+| `GET` | `/api/v1/accounts/{id}` | Consulta el saldo actual y detalles de una cuenta. |
+| `POST` | `/api/v1/transactions/transfer` | Ejecuta una transferencia monetaria inmediata, atómica y segura entre cuentas. |
+
+...
+
+🧪 Estrategia de Pruebas y Calidad
+
+La aplicación cuenta con una sólida pirámide de testing:
+
+* **Pruebas Unitarias:** Aislamiento de la lógica de negocio en servicios mediante **Mockito**.
+* **Pruebas de Integración y Concurrencia:** Uso de **Testcontainers** para levantar un contenedor efímero de PostgreSQL y simular hilos concurrentes (`ExecutorService`) que validan la efectividad del bloqueo pesimista ante intentos de sobregiro simultáneo.
+
+---
+
+🏗️ Ejecución del Proyecto por Hitos (SDD)
+
+El desarrollo de este repositorio fue estructurado de manera incremental en 5 hitos auditados mediante Git Tags:
+
+* `v0.1-milestone1` : Configuración e infraestructura Flyway.
+* `v0.2-milestone2` : Persistencia JPA y Bloqueos Pesimistas.
+* `v0.3-milestone3` : Lógica transaccional y prevención de Deadlocks.
+* `v0.4-milestone4` : Exposición de Endpoints REST y Bean Validation.
+* `v1.0-release` : Suite completa de pruebas con Testcontainers y Concurrencia.
+
+---
+*Creado por Ing. Diego A. Uzcátegui J. | www.linkedin.com/in/diego-uzc-j | Portafolio Profesional*
