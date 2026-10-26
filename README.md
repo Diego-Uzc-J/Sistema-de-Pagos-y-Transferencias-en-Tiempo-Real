@@ -1,20 +1,16 @@
 # 🏦 Sistema de Pagos y Transferencias en Tiempo Real
 
-<div align="center">
-
 [![Java](https://img.shields.io/badge/Java-25%20(LTS)-orange?style=for-the-badge&logo=openjdk)](https://openjdk.org/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.x-brightgreen?style=for-the-badge&logo=springboot)](https://spring.io/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-blue?style=for-the-badge&logo=postgresql)](https://www.postgresql.org/)
 [![Flyway](https://img.shields.io/badge/Flyway-Migrations-red?style=for-the-badge&logo=flyway)](https://flywaydb.org/)
 [![Testcontainers](https://img.shields.io/badge/Testcontainers-Integration%20Tests-orange?style=for-the-badge&logo=docker)](https://www.testcontainers.org/)
 
-*Una API REST robusta, transancional y de alta concurrencia diseñada para replicar el núcleo financiero de un sistema bancario moderno.*
-
-</div>
+Una API REST robusta, transancional y de alta concurrencia diseñada para replicar el núcleo financiero de un sistema bancario moderno.
 
 ---
 
-## 🚀 El Reto Técnico (¿Por qué este proyecto?)
+## 🚀 El Reto Técnico
 
 En la industria financiera (*Fintech* y Banca Core), el fallo más crítico no es una interfaz rota, sino la **inconsistencia de datos monetarios** (ej. dinero que desaparece entre cuentas o sobregiros por condiciones de carrera). 
 
@@ -57,6 +53,24 @@ src/
         ├── service/         # Pruebas unitarias (JUnit 5 + Mockito)
         └── integration/     # Pruebas de integración y concurrencia con Testcontainers
 ```
+
+---
+
+## 🏗️ Arquitectura y Flujo de una Petición
+
+### Diagrama de paquetes y dependencias
+
+![Arquitectura de paquetes y dependencias de Core Banking Lite](docs/arquitectura.png)
+
+La aplicación se organiza en capas con dependencias unidireccionales: `controller → service → repository → model`. El paquete `dto` define el contrato HTTP (validado con Bean Validation y desacoplado de las entidades), mientras que `exception` es transversal: `GlobalExceptionHandler` captura los errores de cualquier capa y los serializa como `ErrorResponse`. `repository` es la única capa que habla con PostgreSQL a través de Spring Data JPA, y `model` mapea las entidades a las tablas creadas por Flyway.
+
+Las flechas continuas representan dependencias de compilación; las discontinuas, usos indirectos (validación/mapeo de DTOs y lanzamiento de excepciones).
+
+### Flujo de una petición: transferencia entre cuentas
+
+![Flujo de una petición de transferencia entre cliente y servidor](docs/flujo-peticion.png)
+
+El camino feliz de `POST /api/v1/transactions/transfer` pasa por: deserialización y validación (`400` si el cuerpo no cumple), `TransferService` con `@Transactional`, **bloqueo pesimista de ambas cuentas ordenadas por ID** (para evitar deadlocks), verificación de existencia (`404`), moneda (`400`) y saldo (`400`), actualización de saldos, registro de la transacción y `COMMIT`. Cualquier excepción dentro de la transacción provoca **rollback**, por lo que los saldos nunca quedan a medias.
 
 ---
 
