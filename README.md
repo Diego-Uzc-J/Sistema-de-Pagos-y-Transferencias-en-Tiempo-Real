@@ -87,6 +87,29 @@ La aplicación cuenta con una sólida pirámide de testing:
 * **Pruebas Unitarias:** Aislamiento de la lógica de negocio en servicios mediante **Mockito**.
 * **Pruebas de Integración y Concurrencia:** Uso de **Testcontainers** para levantar un contenedor efímero de PostgreSQL y simular hilos concurrentes (`ExecutorService`) que validan la efectividad del bloqueo pesimista ante intentos de sobregiro simultáneo.
 
+### ⚙️ Ejecutar las pruebas
+
+```bash
+mvn test                            # Suite completa: unitarias + integración + concurrencia
+mvn -Dtest='*ServiceTest' test      # Solo unitarias (no requiere Docker)
+mvn -Dtest='*IntegrationTest' test  # Integración con PostgreSQL efímero (requiere Docker)
+```
+
+> Las pruebas de integración levantan un contenedor `postgres:15-alpine` con Testcontainers y aplican las migraciones de Flyway automáticamente. La suite incluye 20 transferencias simultáneas sobre un saldo de 100 y transferencias bidireccionales para validar que no se producen sobregiros ni deadlocks.
+
+### 🐘 Ejecución local
+
+```bash
+cp .env.example .env    # ajusta POSTGRES_USER / POSTGRES_PASSWORD si lo necesitas
+docker compose up -d    # PostgreSQL 15 en localhost:5432
+mvn spring-boot:run     # API en http://localhost:8080
+```
+
+> La aplicación importa automáticamente el archivo `.env` mediante `spring.config.import`. Ese archivo está ignorado por git; usa `.env.example` como plantilla.
+>
+> 🐳 También puedes ejecutarla como contenedor: `docker build -t core-banking-lite:local .` o, junto con la base, `docker compose --profile app up -d --build` (instrucciones en [`manual_instalacion.md`](manual_instalacion.md#11-ejecución-con-docker-imagen-de-la-aplicación)).
+>
+
 ---
 
 🏗️ Ejecución del Proyecto por Hitos (SDD)

@@ -1,6 +1,8 @@
 package com.bank.core.exception;
 
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class ErrorResponse {
     private LocalDateTime timestamp;
@@ -8,6 +10,7 @@ public class ErrorResponse {
     private String error;
     private String message;
     private String path;
+    private Map<String, String> details = new LinkedHashMap<>();
 
     public ErrorResponse() {
     }
@@ -58,5 +61,13 @@ public class ErrorResponse {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public Map<String, String> getDetails() {
+        return details;
+    }
+
+    public void setDetails(Map<String, String> details) {
+        this.details = details;
     }
 }

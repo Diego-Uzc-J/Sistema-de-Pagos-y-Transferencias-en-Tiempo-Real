@@ -17,3 +17,7 @@ buildNumber.properties
 logs/
 temp/
 
+# --- Variables de entorno locales ---
+.env
+.env.local
+
